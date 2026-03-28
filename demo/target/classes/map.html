@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Leaflet Map</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        html,
+        body,
+        #map {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script>
+        // Initialize map centered on Colombia
+        var map = L.map('map').setView([4.60971, -74.08175], 6);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors'
+        }).addTo(map);
+
+        var currentRouteLine = null;
+        var markers = [];
+
+        function setRoute(pointsJson) {
+            try {
+                var points = JSON.parse(pointsJson);
+
+                // Remove previous route and markers
+                if (currentRouteLine) {
+                    map.removeLayer(currentRouteLine);
+                }
+                markers.forEach(m => map.removeLayer(m));
+                markers = [];
+
+                if (!points || points.length === 0) return;
+
+                // Add route line
+                currentRouteLine = L.polyline(points, { color: 'blue', weight: 5 }).addTo(map);
+
+                // Add start and end markers
+                var startNode = points[0];
+                var endNode = points[points.length - 1];
+
+                var startMarker = L.marker(startNode).addTo(map).bindPopup("Inicio");
+                var endMarker = L.marker(endNode).addTo(map).bindPopup("Destino");
+                markers.push(startMarker, endMarker);
+
+                // Zoom map to show route
+                map.fitBounds(currentRouteLine.getBounds(), { padding: [50, 50] });
+            } catch (e) {
+                console.error("Error drawing route: " + e);
+            }
+        }
+
+        // Notify Java when map is clicked
+        map.on('click', function (e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+            if (window.javaConnector) {
+                window.javaConnector.onMapClick(lat, lng);
+            }
+        });
+
+        var startPtMarker = null;
+        var endPtMarker = null;
+
+        function setStartMarker(lat, lng) {
+            if (startPtMarker) map.removeLayer(startPtMarker);
+            if (currentRouteLine) map.removeLayer(currentRouteLine);
+            startPtMarker = L.marker([lat, lng]).addTo(map).bindPopup("Inicio seleccionado").openPopup();
+        }
+
+        function setEndMarker(lat, lng) {
+            if (endPtMarker) map.removeLayer(endPtMarker);
+            endPtMarker = L.marker([lat, lng]).addTo(map).bindPopup("Destino seleccionado").openPopup();
+        }
+
+        function clearMarkers() {
+            if (startPtMarker) map.removeLayer(startPtMarker);
+            if (endPtMarker) map.removeLayer(endPtMarker);
+            if (currentRouteLine) map.removeLayer(currentRouteLine);
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+        }
+    </script>
+</body>
+
+</html>
