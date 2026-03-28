@@ -14,7 +14,7 @@ Para que el enrutamiento funcione sin conexión a internet, necesitas proveer la
 
 A continuación se muestra el esquema arquitectónico completo de nuestro sistema:
 
-![UML](uml.png)
+![UML](UML.png)
 
 - Juan Daniel Palomino García 20232020065
 - Juan Camilo Carvajal Camargo 20232020026
