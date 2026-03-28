@@ -3,24 +3,27 @@ package com.ud;
 import javafx.stage.Stage;
 import java.util.List;
 
+import com.ud.Services.BikeR;
+import com.ud.Services.CarR;
+import com.ud.Services.MBikeR;
+import com.ud.Services.Navigator;
+import com.ud.Services.PublicR;
+
 public class AppController {
 
-    private Navigator navigator;
-    private AppView appView;
+    Navigator navigator;
+    AppView appView;
 
     // UI state
-    private double[] origin = null;
-    private double[] destination = null;
-    private boolean selectOriginNext = true;
+    double[] origin = null;
+    double[] destination = null;
+    boolean selectOriginNext = true;
 
     public AppController(Stage primaryStage) {
-        // Initialize default strategy
         navigator = new Navigator(new CarR());
 
-        // Initialize view
-        appView = new AppView(new JavaConnector());
+        appView = new AppView(new JavaConnector(this));
 
-        // Bind events
         appView.getStrategySelector().setOnAction(e -> {
             String val = appView.getStrategySelector().getValue();
             if (val.contains("Car"))
@@ -32,7 +35,6 @@ public class AppController {
             else if (val.contains("Public"))
                 navigator.setStrategy(new PublicR());
 
-            // Auto recalculate if points exist
             if (origin != null && destination != null) {
                 calculateAndDrawRoute();
             }
@@ -53,14 +55,13 @@ public class AppController {
         primaryStage.setScene(appView.getScene());
         primaryStage.show();
 
-        // Async Initialization of GraphHopper to prevent UI freeze
         new Thread(() -> {
             System.out.println("Cargando mapas de fondo...");
             GraphHopperManager.getInstance();
         }).start();
     }
 
-    private void calculateAndDrawRoute() {
+    void calculateAndDrawRoute() {
         if (origin == null || destination == null) {
             System.out.println("Debe seleccionar origen y destino primero.");
             return;
@@ -86,24 +87,4 @@ public class AppController {
         }
     }
 
-    /**
-     * Interface to communicate between JavaScript and Java
-     */
-    public class JavaConnector {
-        public void onMapClick(double lat, double lng) {
-            System.out.println("Map clicked at: " + lat + ", " + lng);
-            if (selectOriginNext) {
-                origin = new double[] { lat, lng };
-                appView.setOriginText(String.format("%.4f, %.4f", lat, lng));
-                appView.executeJS("setStartMarker(" + lat + ", " + lng + ")");
-                selectOriginNext = false;
-            } else {
-                destination = new double[] { lat, lng };
-                appView.setDestinationText(String.format("%.4f, %.4f", lat, lng));
-                appView.executeJS("setEndMarker(" + lat + ", " + lng + ")");
-                selectOriginNext = true;
-                calculateAndDrawRoute();
-            }
-        }
-    }
 }

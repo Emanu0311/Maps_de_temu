@@ -1,4 +1,4 @@
-package com.ud;
+package com.ud.Services;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public interface RouteServices {
      * 
      * @param a The origin coordinates [latitude, longitude]
      * @param b The destination coordinates [latitude, longitude]
-     * @return A list of coordinates [latitude, longitude] representing the path, 
+     * @return A list of coordinates [latitude, longitude] representing the path,
      *         or an empty list if no route was found.
      */
     List<double[]> buildRoute(double[] a, double[] b);

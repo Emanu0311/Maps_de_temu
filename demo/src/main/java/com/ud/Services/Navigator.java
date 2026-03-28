@@ -1,11 +1,7 @@
-package com.ud;
+package com.ud.Services;
 
 import java.util.List;
 
-/**
- * Context class for the Strategy Pattern.
- * It uses a given routing strategy (RouteServices) to build routes.
- */
 public class Navigator {
     private RouteServices activeStrategy;
 

@@ -6,6 +6,11 @@ import com.graphhopper.GraphHopper;
 import com.graphhopper.config.CHProfile;
 import com.graphhopper.config.Profile;
 import com.graphhopper.util.PointList;
+import com.ud.Services.BikeR;
+import com.ud.Services.CarR;
+import com.ud.Services.MBikeR;
+import com.ud.Services.PublicR;
+import com.ud.Services.RouteServices;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,7 +25,6 @@ public class GraphHopperManager {
             System.out.println("Initializing GraphHopper... This may take a while for large maps.");
             hopper = new GraphHopper();
 
-            // Map file location
             String mapFile = "demo/src/main/resources/mapacolombia.pbf";
             File file = new File(mapFile);
             if (!file.exists()) {
@@ -39,10 +43,8 @@ public class GraphHopperManager {
 
             hopper.setOSMFile(mapFile);
 
-            // Where to store the parsed graph cache
             hopper.setGraphHopperLocation("target/routing-graph-cache");
 
-            // Collect profiles dynamically from services
             List<RouteServices> services = Arrays.asList(new CarR(), new BikeR(), new MBikeR(), new PublicR());
             List<Profile> profiles = new ArrayList<>();
             List<CHProfile> chProfiles = new ArrayList<>();
@@ -52,18 +54,11 @@ public class GraphHopperManager {
                 chProfiles.add(s.getCHProfile());
             }
 
-            // Apply collected profiles
             hopper.setProfiles(profiles);
 
-            // Add required encoded values for these custom models
             hopper.setEncodedValuesString("car_access, car_average_speed, bike_priority, bike_access, roundabout, " +
                     "bike_average_speed, track_type, road_access, road_class, surface, foot_access, hike_rating, " +
                     "foot_priority, foot_average_speed");
-
-            // Disable Contraction Hierarchies (CH) for now
-            // Preparing 4 CH profiles for an entire country requires >6GB of RAM.
-            // If the Java process is killed (Exit 137), disabling this allows it to run on low RAM machines.
-            // hopper.getCHPreparationHandler().setCHProfiles(chProfiles);
 
             try {
                 hopper.importOrLoad();
@@ -71,15 +66,12 @@ public class GraphHopperManager {
             } catch (Exception e) {
                 System.err.println("Failed to load map file. Please make sure the OSM/PBF file exists at " + mapFile);
                 e.printStackTrace();
-                hopper = null; // Do not return an invalid instance
+                hopper = null;
             }
         }
         return hopper;
     }
 
-    /**
-     * Helper method to calculate routes
-     */
     public static List<double[]> calculateRoute(double[] origin, double[] destination, String profileName) {
         GraphHopper gh = getInstance();
         if (gh == null || origin == null || destination == null) {

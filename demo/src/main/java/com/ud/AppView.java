@@ -18,9 +18,6 @@ import netscape.javascript.JSObject;
 
 import java.net.URL;
 
-/**
- * Handles all visual layout and view setups for the JavaFX App
- */
 public class AppView {
 
     private Scene scene;
@@ -69,11 +66,9 @@ public class AppView {
                 coords);
         root.setTop(topPanel);
 
-        // --- Center Map View ---
         WebView webView = new WebView();
         webEngine = webView.getEngine();
 
-        // Load the HTML map file with Leaflet
         URL mapUrl = getClass().getResource("/map.html");
         if (mapUrl != null) {
             webEngine.load(mapUrl.toExternalForm());
@@ -81,7 +76,6 @@ public class AppView {
             System.err.println("Map HTML not found in resources!");
         }
 
-        // Setup Java-JS Bridge when map loads
         webEngine.getLoadWorker().stateProperty().addListener(
                 new ChangeListener<Worker.State>() {
                     @Override
@@ -102,7 +96,6 @@ public class AppView {
         return scene;
     }
 
-    // Controls exposed for event binding in controller
     public ComboBox<String> getStrategySelector() {
         return strategySelector;
     }
