@@ -1,25 +1,10 @@
 package com.ud;
 
+/**
+ * @deprecated Replaced by a direct BiConsumer<Double,Double> callback in AppView.
+ * This class is kept only for backwards compatibility and does nothing.
+ */
+@Deprecated
 public class JavaConnector {
-    private AppController controller;
-
-    public JavaConnector(AppController controller) {
-        this.controller = controller;
-    }
-
-    public void onMapClick(double lat, double lng) {
-        System.out.println("Map clicked at: " + lat + ", " + lng);
-        if (controller.selectOriginNext) {
-            controller.origin = new double[] { lat, lng };
-            controller.appView.setOriginText(String.format("%.4f, %.4f", lat, lng));
-            controller.appView.executeJS("setStartMarker(" + lat + ", " + lng + ")");
-            controller.selectOriginNext = false;
-        } else {
-            controller.destination = new double[] { lat, lng };
-            controller.appView.setDestinationText(String.format("%.4f, %.4f", lat, lng));
-            controller.appView.executeJS("setEndMarker(" + lat + ", " + lng + ")");
-            controller.selectOriginNext = true;
-            controller.calculateAndDrawRoute();
-        }
-    }
+    // No longer used — map click events are handled natively via AppView's MouseAdapter
 }

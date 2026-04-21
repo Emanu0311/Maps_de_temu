@@ -42,6 +42,11 @@
       <artifactId>javafx-fxml</artifactId>
       <version>21.0.2</version>
     </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-swing</artifactId>
+      <version>21.0.2</version>
+    </dependency>
 
     <!-- JUnit -->
     <dependency>
@@ -50,7 +55,32 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
-  </dependencies>
+
+
+    <!-- MapsForge -->
+    <dependency>
+        <groupId>org.mapsforge</groupId>
+        <artifactId>mapsforge-map</artifactId>
+        <version>0.20.0</version> </dependency>
+
+    <dependency>
+        <groupId>org.mapsforge</groupId>
+        <artifactId>mapsforge-map-awt</artifactId>
+        <version>0.20.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.mapsforge</groupId>
+        <artifactId>mapsforge-map-reader</artifactId>
+        <version>0.20.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.mapsforge</groupId>
+        <artifactId>mapsforge-themes</artifactId>
+        <version>0.20.0</version>
+    </dependency>
+</dependencies>
 
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
